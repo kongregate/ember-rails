@@ -26,23 +26,26 @@ module Ember
         # Copy over the desired ember and ember-data bundled in
         # ember-source and ember-data-source to a tmp folder.
         tmp_path = app.root.join("tmp/ember-rails")
-        FileUtils.mkdir_p(tmp_path)
+        begin
+          FileUtils.mkdir_p(tmp_path)
 
-        if variant == :production
-          ember_ext = ".prod.js"
-        else
-          ember_ext = ".debug.js"
-          ember_ext = ".js" unless File.exist?(::Ember::Source.bundled_path_for("ember#{ember_ext}")) # Ember.js 1.9.0 or earlier has no "ember.debug.js"
-        end
-        FileUtils.cp(::Ember::Source.bundled_path_for("ember#{ember_ext}"), tmp_path.join("ember.js"))
-        ember_data_ext = variant == :production ? ".prod.js" : ".js"
-        FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data#{ember_data_ext}"), tmp_path.join("ember-data.js"))
+          if variant == :production
+            ember_ext = ".prod.js"
+          else
+            ember_ext = ".debug.js"
+            ember_ext = ".js" unless File.exist?(::Ember::Source.bundled_path_for("ember#{ember_ext}")) # Ember.js 1.9.0 or earlier has no "ember.debug.js"
+          end
+          FileUtils.cp(::Ember::Source.bundled_path_for("ember#{ember_ext}"), tmp_path.join("ember.js"))
+          ember_data_ext = variant == :production ? ".prod.js" : ".js"
+          FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data#{ember_data_ext}"), tmp_path.join("ember-data.js"))
 
-        # Copy ember-data source map to tmp folder.
-        if File.exist?(::Ember::Data::Source.bundled_path_for("ember-data.js.map")) # Source maps are present in ember-data-source gem, starting from version 1.0.0-beta.14.1
-          FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data.js.map"), tmp_path.join("ember-data.js.map"))
+          # Copy ember-data source map to tmp folder.
+          if File.exist?(::Ember::Data::Source.bundled_path_for("ember-data.js.map")) # Source maps are present in ember-data-source gem, starting from version 1.0.0-beta.14.1
+            FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data.js.map"), tmp_path.join("ember-data.js.map"))
+          end
+        rescue Errno::EACCES
         end
-        
+
         app.assets.append_path(tmp_path)
 
         # Make the handlebars.js and handlebars.runtime.js bundled
