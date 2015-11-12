@@ -1,6 +1,9 @@
-#= require handlebars
+#= require jquery
+#= require jquery_ujs
+<%= "#= require handlebars\n" if ::Rails.configuration.handlebars.ember_template == 'Handlebars' -%>
 #= require ember
 #= require ember-data
+#= require active-model-adapter
 #= require_self
 #= require <%= application_name.underscore %>
 

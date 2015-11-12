@@ -1,10 +1,9 @@
 require 'test_helper'
 require 'generators/ember/bootstrap_generator'
-require File.expand_path('../../dummy/config/engine', __FILE__)
 
 class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
   tests Ember::Generators::BootstrapGenerator
-  destination File.join(ENGINE_ROOT, "tmp", "generator_engine_test_output")
+  destination Rails.root.join('tmp', 'generator_engine_test_output')
 
   setup :prepare_destination
   teardown :cleanup
@@ -44,50 +43,24 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
 
     test "create bootstrap in a rails engine with #{engine}" do
       run_generator ["--javascript-engine=#{engine}"]
-      assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{ember_path}/adapters/application_adapter.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/#{engine_name}.js.#{engine}".sub('.js.js','.js')
     end
 
     test "create bootstrap in a rails engine with #{engine} engine and custom path" do
       custom_path = ember_path("custom")
       run_generator ["--javascript-engine=#{engine}", "-d", custom_path]
-      assert_file "#{custom_path}/store.js.#{engine}".sub('.js.js','.js')
       assert_file "#{custom_path}/router.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{custom_path}/adapters/application_adapter.js.#{engine}".sub('.js.js','.js')
       assert_file "#{custom_path}/#{engine_name}.js.#{engine}".sub('.js.js','.js')
     end
 
     test "create bootstrap in a rails engine with #{engine} and custom app name" do
       run_generator ["--javascript-engine=#{engine}", "-n", "MyEngine"]
-      assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js'), /MyEngine\.Store/
       assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js'), /MyEngine\.Router\.map/
+      assert_file "#{ember_path}/adapters/application_adapter.js.#{engine}".sub('.js.js','.js'), /MyEngine\.ApplicationAdapter/
       assert_file "#{ember_path}/my_engine.js.#{engine}".sub('.js.js','.js')
-    end
-  end
-
-  test "Uses config.ember.app_name as the app name" do
-    begin
-      old, ::Rails.configuration.ember.app_name = ::Rails.configuration.ember.app_name, 'MyApp'
-
-      run_generator
-      assert_file "#{ember_path}/store.js", /MyApp\.Store/
-      assert_file "#{ember_path}/router.js", /MyApp\.Router\.map/
-    ensure
-      ::Rails.configuration.ember.app_name = old
-    end
-  end
-
-  test "Uses config.ember.ember_path" do
-    begin
-      custom_path = ember_path("custom")
-      old, ::Rails.configuration.ember.ember_path = ::Rails.configuration.ember.ember_path, custom_path
-
-      run_generator
-      assert_file "#{custom_path}/store.js"
-      assert_file "#{custom_path}/router.js"
-      assert_file "#{custom_path}/#{engine_name}.js"
-    ensure
-      ::Rails.configuration.ember.ember_path = old
     end
   end
 
@@ -100,7 +73,7 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
   def assert_new_dirs(options = {})
     path = options[:in_path] || ember_path
 
-    %W{models controllers views helpers components templates templates/components routes}.each do |dir|
+    %W{models controllers views helpers components templates templates/components routes mixins adapters}.each do |dir|
       assert_directory "#{path}/#{dir}"
       assert_file "#{path}/#{dir}/.gitkeep" unless options[:skip_git]
     end

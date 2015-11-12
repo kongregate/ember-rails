@@ -3,7 +3,7 @@ require 'generators/ember/resource_generator'
 
 class ResourceGeneratorTest < Rails::Generators::TestCase
   tests Ember::Generators::ResourceGenerator
-  destination File.join(Rails.root, "tmp")
+  destination File.join(Rails.root, "tmp", "generator_test_output")
   setup :prepare_destination
 
 
@@ -16,7 +16,7 @@ class ResourceGeneratorTest < Rails::Generators::TestCase
 
     test "create template with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/templates/post.handlebars"
+      assert_file "app/assets/javascripts/templates/post.hbs"
     end
 
     test "create controller with #{engine} engine" do
