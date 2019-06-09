@@ -2,7 +2,6 @@ require 'test_helper'
 require 'generators/ember/install_generator'
 require 'vcr'
 
-
 class InstallGeneratorTest < Rails::Generators::TestCase
   tests Ember::Generators::InstallGenerator
   destination File.join(Rails.root, "tmp", "generator_test_output")
@@ -18,10 +17,9 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   def set_test_environment
-    ENV['THOR_DEBUG'] = '1'
     VCR.configure do |c|
       c.cassette_library_dir = 'test/fixtures/vcr_cassettes'
-      c.hook_into :webmock # or :fakeweb
+      c.hook_into :faraday # or :webmock or :fakeweb
       c.default_cassette_options = { :record => :new_episodes }
     end
   end
@@ -38,20 +36,21 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   test "without any options it load the release channel" do
-
     VCR.use_cassette('fetch_ember_release') do
-      run_generator 
-      assert_all_ember_files
-      # assert_all_ember_data_files TODO: Remove after ember data is released
+      run_generator
     end
+    assert_all_ember_files
+    assert_all_ember_template_compiler_files
+    assert_all_ember_data_files
   end
 
   test "with options --head it should load the canary ember-data & ember files" do
     VCR.use_cassette('fetch_ember_canary') do
       run_generator ['--head']
-      assert_all_ember_files
-      assert_all_ember_data_files
     end
+    assert_all_ember_files
+    assert_all_ember_template_compiler_files
+    assert_all_ember_data_files
   end
 
   test "with options --head it should show a deprecation message" do
@@ -61,35 +60,36 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-
   test "with options channel=release it should load the release ember-data & ember files" do
     VCR.use_cassette('fetch_ember_release') do
       run_generator ['--channel=release']
-      assert_all_ember_files
-      # assert_all_ember_data_files TODO: Remove after ember data is released
     end
+    assert_all_ember_files
+    assert_all_ember_template_compiler_files
+    assert_all_ember_data_files
   end
-
 
   test "with options channel=beta it should load the beta ember-data & ember files" do
     VCR.use_cassette('fetch_ember_beta') do
       run_generator ['--channel=beta']
-      assert_all_ember_files
-      assert_all_ember_data_files
     end
+    assert_all_ember_files
+    assert_all_ember_template_compiler_files
+    assert_all_ember_data_files
   end
 
   test "with options channel=canary it should load the beta ember-data & ember files" do
     VCR.use_cassette('fetch_ember_canary') do
       run_generator ['--channel=canary']
-      assert_all_ember_files
-      assert_all_ember_data_files
     end
+    assert_all_ember_files
+    assert_all_ember_template_compiler_files
+    assert_all_ember_data_files
   end
 
   test "with options channel set and options --head it should raise exception ConflictingOptions" do
     assert_raise ::ConflictingOptions do
-      run_generator ['--channel=canary', '--head']
+      run_generator ['--channel=canary', '--head'], debug: true
     end
     assert_no_ember_files
     assert_no_ember_data_files
@@ -97,7 +97,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "with unknown channel option it should raise exception InvalidChannel" do
     assert_raise ::InvalidChannel do
-      run_generator ['--channel=unkown'] 
+      run_generator ['--channel=unkown'], debug: true
     end
     assert_no_ember_files
     assert_no_ember_data_files
@@ -108,6 +108,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       run_generator ['--ember_only']
     end
     assert_all_ember_files
+    assert_all_ember_template_compiler_files
     assert_no_ember_data_files
   end
 
@@ -116,6 +117,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       run_generator ['--ember']
     end
     assert_all_ember_files
+    assert_all_ember_template_compiler_files
     assert_no_ember_data_files
   end
 
@@ -127,7 +129,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_all_ember_data_files
   end
 
-
   test "option --ember-data aliasses --ember_data_only" do
     VCR.use_cassette('fetch_ember_beta') do
       run_generator ['--ember-data', '--channel=beta']
@@ -135,7 +136,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_no_ember_files
     assert_all_ember_data_files
   end
-
 
   test "with options --tag=v1.0.0-beta.1 --ember-data" do
     VCR.use_cassette('fetch_ember_data_tagged') do
@@ -145,27 +145,44 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_all_ember_data_files
   end
 
-
-  test "with option --tag=v1.2.0-beta.2 --ember" do
+  test "with option --tag=v1.11.0 --ember" do
     VCR.use_cassette('fetch_ember_tagged') do
-      run_generator ['--tag=v1.2.0-beta.2', '--ember']
+      run_generator ['--tag=v1.11.0', '--ember']
     end
     assert_all_ember_files
+    assert_all_ember_template_compiler_files
+    assert_no_ember_data_files
+  end
+
+  test "with option --tag=v1.2.0 --ember" do
+    VCR.use_cassette('fetch_ember_tagged') do
+      run_generator ['--tag=v1.2.0', '--ember']
+    end
+    assert_all_ember_files
+    assert_all_ember_template_compiler_files
+    assert_no_ember_data_files
+  end
+
+  test "with option --tag=v1.1.0 --ember" do
+    VCR.use_cassette('fetch_ember_tagged') do
+      run_generator ['--tag=v1.1.0', '--ember']
+    end
+    assert_all_ember_files
+    assert_no_ember_template_compiler_files # Old ember has no `ember-template-compiler.js`
     assert_no_ember_data_files
   end
 
   test "with options --channel set and options --tag it should raise exception ConflictingOptions" do
     assert_raise ::ConflictingOptions do
-      run_generator ['--channel=canary', '--tag=v1.2.0-beta.2/ember']
+      run_generator ['--channel=canary', '--tag=v1.2.0-beta.2/ember'], debug: true
     end
     assert_no_ember_files
     assert_no_ember_data_files
   end
 
-
   test "with options --head set and options --tag it should raise exception ConflictingOptions" do
     assert_raise ::ConflictingOptions do
-      run_generator ['--head', '--tag=v1.2.0-beta.2/ember']
+      run_generator ['--head', '--tag=v1.2.0-beta.2/ember'], debug: true
     end
     assert_no_ember_files
     assert_no_ember_data_files
@@ -173,16 +190,22 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "with options --tag without --ember or --ember-data it should raise exception InsufficientOptions" do
     assert_raise ::InsufficientOptions do
-      run_generator ['--tag=v1.2.0-beta.2']
+      run_generator ['--tag=v1.2.0-beta.2'], debug: true
     end
     assert_no_ember_files
     assert_no_ember_data_files
   end
 
+  private
 
   def assert_all_ember_files
     assert_file "vendor/assets/ember/development/ember.js"
     assert_file "vendor/assets/ember/production/ember.js"
+  end
+
+  def assert_all_ember_template_compiler_files
+    assert_file "vendor/assets/ember/development/ember-template-compiler.js"
+    assert_file "vendor/assets/ember/production/ember-template-compiler.js"
   end
 
   def assert_all_ember_data_files
@@ -193,6 +216,11 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   def assert_no_ember_files
     assert_no_file "vendor/assets/ember/development/ember.js"
     assert_no_file "vendor/assets/ember/production/ember.js"
+  end
+
+  def assert_no_ember_template_compiler_files
+    assert_no_file "vendor/assets/ember/development/ember-template-compiler.js"
+    assert_no_file "vendor/assets/ember/production/ember-template-compiler.js"
   end
 
   def assert_no_ember_data_files

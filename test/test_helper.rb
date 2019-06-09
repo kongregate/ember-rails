@@ -18,7 +18,13 @@ rescue LoadError
   TestCase = Test::Unit::TestCase
 end
 
+if Rails.version >= "4.0.0"
+  IntegrationTest = ActionDispatch::IntegrationTest
+else
+  require 'json'
+  IntegrationTest = ActionController::IntegrationTest
+end
+
 require 'active_support/core_ext/kernel/reporting'
-require 'pathname'
 
 Rails.backtrace_cleaner.remove_silencers!

@@ -1,3 +1,114 @@
+## 0.21.0 (Mar 25, 2017)
+
+  - Drop Rails < 4.2 support
+  - Support Sprockets 4
+  - Support Rails 5.1
+
+## 0.20.6 (Dec 8, 2016)
+
+  - Fix CLI's default option to suppress warning from thor ~>0.19.3.
+
+## 0.20.5 (Mar 23, 2016)
+
+  - Support initializer as ES6 module syntax
+  - Support instance initializer as ES6 module syntax
+  - Generate bootstrap files using `config.ember.prefix_dirs`
+
+## 0.20.4 (Mar 20, 2016)
+
+  - Support `Ember.Service` as ES6 module syntax
+
+## 0.20.3 (Mar 7, 2016)
+
+  - Don't depend on `Rails.configuration` in generator template for Rails Engine
+
+## 0.20.2 (Mar 6, 2016)
+
+  - Fix to generated app file path for coffee & em
+  - Allow `transforms` directory as an module compilation target
+
+## 0.20.1 (Feb 20, 2016)
+
+  - Fix environment.coffee/em generator typo
+
+## 0.20.0 (Feb 9, 2016)
+
+  - Support ES6 syntax
+
+## 0.19.3 (Dec 9, 2015)
+
+  - Use the 'prod' variant when downloading ember
+
+## 0.19.2 (Aug 28, 2015)
+
+  - Support sprockets-rails 3.0.0
+
+## 0.19.1 (Aug 14, 2015)
+
+  - Fix to be compatible with Sprockets 2 and 3
+
+## 0.19.0 (July 13, 2015)
+
+  - Add support for the active-model-adapter as a gem
+
+## 0.18.3 (July 5, 2015)
+
+  - Fix to support jRuby without handlebars-source
+
+## 0.18.2 (April 11, 2015)
+
+  - Update generator using `Ember.Controller` instead of `Ember.ObjectController`
+
+## 0.18.1 (April 2, 2015)
+
+  - Support to precompile handlebars with vendored ember-template-compiler.js
+
+## 0.18.0 (Mar 30, 2015)
+
+  - Extract `Ember::Handlebars::Template` to [ember-handlebars-template](https://github.com/tricknotes/ember-handlebars-template) gem.
+  - Support sprockets 3 beta
+
+## 0.17.0 (Mar 14, 2015)
+
+  - Remove Handlebars dependency (It becomes an optional feature.)
+
+## 0.16.4 (Feb 17, 2015)
+
+  - Append all assets to sprockets path that bundled in ember-source & ember-data-source
+
+## 0.16.3 (Feb 13, 2015)
+
+  - Remove extra heading `/` from AMD module name
+
+## 0.16.2 (Feb 11, 2015)
+
+  - Restrict handlebars-source version < 3 because of precompilation failed.
+  - Update generator using `jquery_ujs` to deal with CSRF Token correctly.
+
+## 0.16.1 (Jan 1, 2015)
+
+  - Fix to support ember-data.js.map
+
+## 0.16.0 (Dec 28, 2014)
+
+  - Support HTMLBars compilation
+  - Add adapter generator
+
+## 0.15.1 (Dec 13, 2014)
+
+  - Fix `ember:install` for ember-data to work with `--channel=release`.
+  - Stop generation `App.Store`.
+  - Support for CSRF Token to DS.RESTAdapter in store
+  - Fix handlebars amd output compatibility with IE8
+
+## 0.15.0 (April 30, 2014)
+
+  - Load app.js with relative path.
+  - Bootstrap generator should add code at the end of application.js if there's no newline.
+  - coffee-script template should require jQuery.
+  - Ensure Ember Data 1.0.0-beta is used.
+  - Use App.ApplicationAdapter instead of using `_ams`.
+
 ## 0.14.1 (Nov 27, 2013)
 
   - Fixed 404 error detection in `ember:install` generator.
@@ -52,8 +163,8 @@
 
   Improvements:
 
-    - The development/production switch was rewriten and should be muche more robust
-    - Lots of work on generators
+  - The development/production switch was rewriten and should be muche more robust
+  - Lots of work on generators
 
 ## 0.4.0 (Avr 20, 2012)
 
@@ -61,8 +172,8 @@
 
   Improvements:
 
-    - Ember-rails will use the production build of Ember.js when Rails is
-      running in production mode, and the development build otherwise.
+  - Ember-rails will use the production build of Ember.js when Rails is
+    running in production mode, and the development build otherwise.
 
 ## 0.3.1 (Avr 19, 2012)
 
@@ -70,7 +181,7 @@
 
   Improvements:
 
-    - Fix #34
+  - Fix #34
 
 ## 0.3.0 (Avr 9, 2012)
 
@@ -78,9 +189,9 @@
 
   Improvements:
 
-    - Use precompilation only in production environment
-    - Expose some options related to templates paths
-    - Slim and Haml filters
+  - Use precompilation only in production environment
+  - Expose some options related to templates paths
+  - Slim and Haml filters
 
 ## 0.2.4 (Jan 27, 2012)
 
@@ -88,6 +199,6 @@
 
   Improvements:
 
-    - Removing ember-datetime. Just vanilla ember.js will be included in
-      this gem for the immediate future.
-    - Use precompilation provided by Ember.js to reduce duplication
+  - Removing ember-datetime. Just vanilla ember.js will be included in
+    this gem for the immediate future.
+  - Use precompilation provided by Ember.js to reduce duplication

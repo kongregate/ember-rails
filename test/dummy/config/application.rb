@@ -5,7 +5,9 @@ require "rails/test_unit/railtie"
 require 'sprockets/railtie'
 
 Bundler.require
+require "jquery-rails"
 require "ember-rails"
+require "handlebars/source" # Enable optional features related handlebars.
 
 module Dummy
   class Application < Rails::Application

@@ -9,9 +9,16 @@ Dummy::Application.configure do
 
   config.eager_load = false
 
-  # Configure static asset server for tests with Cache-Control for performance
-  config.serve_static_assets = true
-  config.static_cache_control = "public, max-age=3600"
+  if Rails::VERSION::MAJOR >= 5
+    config.public_file_server.enabled = true
+    config.public_file_server.headers = {
+      'Cache-Control' => "public, max-age=#{1.hour.seconds.to_i}"
+    }
+  else
+    # Configure static asset server for tests with Cache-Control for performance
+    config.serve_static_files = true
+    config.static_cache_control = "public, max-age=3600"
+  end
 
   # Log error messages when you accidentally call methods on nil
   config.whiny_nils = true unless Rails.version >= '4.0.0'
@@ -38,4 +45,6 @@ Dummy::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  config.active_support.test_order = :sorted
 end
