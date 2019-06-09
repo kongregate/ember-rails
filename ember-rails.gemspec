@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "jquery-rails", ">= 1.0.17"
   s.add_dependency "ember-source", ">= 1.8.0"
-  s.add_dependency "ember-data-source", '>= 1.13.0'
+  s.add_dependency "ember-data-source"
   s.add_dependency "active-model-adapter-source", ">= 1.13.0"
   s.add_dependency "ember-handlebars-template", ">= 0.1.1", "< 1.0"
   s.add_dependency "ember-es6_template", ">= 0.4.0", "< 0.7"
