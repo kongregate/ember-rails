@@ -104,6 +104,7 @@ module Ember
       initializer "ember_rails.setup_ember_template_compiler", :after => "ember_rails.setup_vendor", :group => :all do |app|
         configure_assets app do |env|
           Ember::Handlebars::Template.setup_ember_template_compiler(env.find_asset('ember-template-compiler.js').filename)
+        rescue Errno::EACCES
         end
       end
 
